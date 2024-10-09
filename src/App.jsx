@@ -1,62 +1,99 @@
+import { useState } from "react";
+import { nanoid } from "nanoid";
 import FooterColumnLinks from "./components/FooterColumnLinks";
 import Product from "./components/Product";
 
-const footerLinks = [
-  {
-    title: "Our store",
-    links: ["About us", "Contact us", "Become a partner"],
-  },
-  {
-    title: "Our policies",
-    links: ["Return policies", "Shipping policy", "Terms of service"],
-  },
-  {
-    title: "Our products",
-    links: ["Home page", "Search", "Catalog"],
-  }
-];
-
-const PRODUCTS = [
-  {
-    name: "Shoes",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Asics_Gel-Cumulus_22.jpg",
-    price: 50,
-  },
-  {
-    name: "Men's shirt",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/0/09/Shirt%2C_men%27s_%28AM_2015.44.1-1%29.jpg",
-    price: 36,
-  },
-  {
-    name: "Men's jeans",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/d2/Jeans_for_men.jpg",
-    price: 45,
-  },
-  {
-    name: "Samsung galaxy",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/da/%D0%92%D0%BD%D1%83%D1%82%D1%80%D1%96%D1%88%D0%BD%D1%96%D0%B9_%D0%B5%D0%BA%D1%80%D0%B0%D0%BD_Samsung_Galaxy_Fold_2.png",
-    price: 1200,
-  },
-  {
-    name: "Chair",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/25/Rey_Chair.png",
-    price: 25,
-  },
-  {
-    name: "Fridge",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/3/35/Custom_Door_Fridge_2.jpg",
-    price: 600,
-  }
-];
+import { initialProducts, footerLinks } from './fixtures';
 
 function App() {
-  
-  const footerColumns = footerLinks.map(column => <FooterColumnLinks key={column.title} data={column} />);
+  const [products, setProducts] = useState(initialProducts);
+  const [editing, setEditing] = useState(false);
 
-  const productList = PRODUCTS.map(product => <Product key={product.name} product={product} />);
+  // state variable for the product form
   
+  
+  const footerColumns = footerLinks.map(column => (
+    <FooterColumnLinks key={column.title} data={column} />
+  ));
+
+  const productList = products.map(product => (
+    <Product key={product.name} product={product} />
+  ));
+
+  function handleCancel(e) {
+    e.preventDefault();
+    setEditing(null);
+  }
+
+  // Product Form
+  const productForm = (
+    <form>
+      <div className="control-group">
+        <label htmlFor="product-name">Name: </label>
+        <input
+          id="product-name"
+          name="name"
+          type="text"
+        />
+      </div>
+       
+      <div className="control-group">
+        <label htmlFor="product-category">Category:</label>
+        <select
+          id="product-category"
+          name="category"
+        >
+          <option value="0">Uncategorized</option>
+        </select>
+      </div>
+
+      <div className="control-group">
+        <label htmlFor="product-price">Price: </label>
+        <input
+          id="product-price"
+          name="price"
+          type="number"
+          step="0.01"
+        />
+      </div>
+
+      <div className="control-group">
+        <label htmlFor="product-quantity">Quantity: </label>
+        <input
+          id="product-quantity"
+          name="quantity"
+          type="number"
+        />
+      </div>
+    
+      <div className="btn-group">
+        <button type="button" className="btn-primary">Save</button>
+        <button type="button" className="btn-cancel" onClick={handleCancel}>Cancel</button>
+      </div>
+    </form>
+  );
+
+  // Category Form
+  const categoryForm = (
+    <form>
+      <div className="control-group">
+        <label htmlFor="category-name">Category Name: </label>
+        <input
+          id="category-name"
+          name="categoryName"
+          type="text"
+        />
+      </div>
+
+      <div className="btn-group">
+        <button type="button" className="btn-primary">Save</button>
+        <button type="button" className="btn-cancel" onClick={handleCancel}>Cancel</button>
+      </div>
+    </form>
+  );
+
   return (
-    <div class="app">
+    <div className="app"> {/* Changed class to className */}
       <section id="content">
         <header>
           <div>
@@ -79,6 +116,16 @@ function App() {
               <button type="button">Go</button>
             </form>
           </div>
+
+          <div>
+            <button className="btn-primary" onClick={() => setEditing('product')}>New Product</button>
+            <button className="btn-secondary" onClick={() => setEditing('category')}>New Category</button>
+          </div>
+
+          <div className="add-form">
+            {editing === 'product' && productForm}
+            {editing === 'category' && categoryForm}
+          </div>
           
         </header>
         <main>
@@ -92,7 +139,6 @@ function App() {
         <div>
           &copy; Yves Rene Shema, 2024
         </div>
-        
       </footer>
     </div>
   );
